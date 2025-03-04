@@ -1,0 +1,98 @@
+import pandas as pd
+import numpy as ny
+import matplotlib.pyplot as plt
+import seaborn as sb
+from sklearn.linear_model import LinearRegression
+from sklearn.impute import SimpleImputer
+
+#import necesarry Libraries
+df = pd.read_csv('D:\Data Projects\Kaggle\Kaggle-Notebooks\brisbaneWaterQuality\brisbaneWaterQuality.csv')
+df.head()
+
+#look at the integrity of the data to understand it
+df.info()
+df.isnull().sum()
+
+#dropping rows with NaN Values
+df = df.dropna()
+df.info()
+
+#elimantnated quality columns as they are affecting the heatmap properly
+print(df.columns.to_list)
+
+#updated Correlation Table for readability
+corrMapp = ['Average Water Speed','Average Water Direction','Chlorophyll','Temperature','Dissolved Oxygen','Dissolved Oxygen (%Saturation)','pH','Salinity','Specific Conductance','Turbidity']
+corr_matrix = df[corrMapp].corr()
+print(corr_matrix)
+
+#new updated correlation table
+plt.Figure(figsize=(20,10))
+sb.heatmap(corr_matrix,annot=True,cmap='coolwarm', fmt=".2",linewidths=1)
+plt.title("Correlation Heatmap")
+plt.show
+
+#chlorophyll vs dissolved oxygen because it is the powerhouse of the cell obv.
+
+plt.Figure(figsize=(16,10))
+
+plt.scatter(df['Chlorophyll'], df['Dissolved Oxygen (%Saturation)'], alpha=0.5, s=4,edgecolors='white')
+plt.title('Chlorophyll vs Dissolved Oxygen (%Saturation)')
+plt.xlabel('Chlorophyll')
+plt.ylabel('Dissovled Oxygen (%Saturation)')
+plt.show()
+
+#with a value of .4 I was curious to see what these can be somewhat correlated
+plt.Figure(figsize=(100,25))
+
+plt.scatter(df['pH'], df['Dissolved Oxygen'], alpha=0.5, s=10,edgecolors='white')
+plt.title('pH vs Dissolved Oxygen')
+plt.xlabel('pH')
+plt.ylabel('Dissolved Oxygen')
+plt.show()
+
+#
+plt.Figure(figsize=(12,10))
+
+plt.scatter(df['pH'],df['Temperature'], alpha=0.5,s=4,edgecolors='white')
+plt.title('pH vs Temperature')
+plt.xlabel('pH')
+plt.ylabel('Temperature')
+plt.show()
+
+#after looking at pH vs Temperature and pH vs Dissolved Oxygen I was curious what the scatter plot looked like. 
+plt.Figure(figsize=(12,19))
+
+plt.scatter(df['Dissolved Oxygen'],df['Temperature'], alpha=0.5,s=4,edgecolors='white')
+plt.title('Dissolved Oxygen vs Temperature')
+plt.xlabel('Dissolved Oxygen')
+plt.ylabel('Temperature')
+plt.show()
+
+#Time Series Analysis
+#Convert timestamp to datetime
+df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+
+df_sample = df.head(365)
+plt.figure(figsize=(12, 19))
+for col in ['Temperature', 'Dissolved Oxygen', 'Chlorophyll', 'pH', 'Salinity']:
+    plt.plot(df_sample['Timestamp'], df_sample[col], label=col)
+
+plt.legend()
+plt.title('Time Series of Important Environmental Variables')
+plt.xlabel('Timestamp')
+plt.ylabel('Value')
+plt.show()
+
+
+df['Timestamp'] = pd.to_datetime(df['Timestamp'])
+
+df_sample = df.head(1000)
+plt.figure(figsize=(12, 19))
+for col in ['Temperature', 'Dissolved Oxygen', 'Chlorophyll', 'pH', 'Salinity']:
+    plt.plot(df_sample['Timestamp'], df_sample[col], label=col)
+
+plt.legend()
+plt.title('Time Series of Important Environmental Variables')
+plt.xlabel('Timestamp')
+plt.ylabel('Value')
+plt.show()
