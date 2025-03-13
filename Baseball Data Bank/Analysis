@@ -1,0 +1,12 @@
+import pandas as pd
+import os
+
+#Look into size of files to see what I am handling 
+folder_path = r"D:\Data Projects\Kaggle\Kaggle-Notebooks\Baseball Data Bank"
+
+for file in os.listdir('D:\Data Projects\Kaggle\Kaggle-Notebooks\Baseball Data Bank'):
+    if file.endswith(".csv"):  # Only process CSV files
+        file_path = os.path.join(folder_path, file)
+        df = pd.read_csv(file_path)
+        num_rows, num_columns = df.shape
+        print(f"{file} → Rows: {num_rows}, Columns: {num_columns}")
